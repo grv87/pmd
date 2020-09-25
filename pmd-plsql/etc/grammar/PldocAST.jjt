@@ -1903,7 +1903,7 @@ void FromClauseEntry() #void :
      LOOKAHEAD([ SchemaName() "." ] TableName() [<IDENTIFIER>]
                (<PARTITION>|<NATURAL>|<OUTER>|<INNER>|<JOIN>|<LEFT>|<RIGHT>|<CROSS>|<FULL>)) JoinClause()
  |
-     LOOKAHEAD(<IDENTIFIER> "(", {isKeyword("XMLTABLE")}) XMLTable() [ LOOKAHEAD(2) TableAlias() ]
+     LOOKAHEAD(<IDENTIFIER> "(", {isKeyword("XMLTABLE")}) XMLTable() [ LOOKAHEAD(1, ID(), {!(getToken(1).kind == LOG && getToken(2).kind == ERRORS)}) TableAlias() ]
  |
      LOOKAHEAD(3) (TableReference() (JoinClausePart())*) #JoinClause(>1)
  |
@@ -1999,7 +1999,7 @@ ASTTableReference TableReference() :
 {
     QueryTableExpression()
 
-    [ LOOKAHEAD(2) TableAlias() ]
+    [ LOOKAHEAD(1, ID(), {!(getToken(1).kind == LOG && getToken(2).kind == ERRORS)}) TableAlias() ]
 
     { return jjtThis; }
 }
@@ -2043,7 +2043,7 @@ ASTTableReference TableReferenceInJoin() #TableReference :
 {
     QueryTableExpression()
 
-    [ LOOKAHEAD(1, ID(), {
+    [ LOOKAHEAD(2, ID(), {
         // ON / USING might follow a table reference inside a inner cross join
            getToken(1).kind != ON
         && getToken(1).kind != USING
@@ -2061,6 +2061,8 @@ ASTTableReference TableReferenceInJoin() #TableReference :
         && getToken(1).kind != LEFT
         && getToken(1).kind != RIGHT
         && getToken(1).kind != OUTER
+
+        && !(getToken(1).kind == LOG && getToken(2).kind == ERRORS)
         })
 
         TableAlias() ]
@@ -2384,7 +2386,7 @@ ASTInsertIntoClause InsertIntoClause() :
 {}
 {
     <INTO> DMLTableExpressionClause()
-    [ LOOKAHEAD(2) TableAlias() ]
+    [ LOOKAHEAD(1, ID(), {!(getToken(1).kind == LOG && getToken(2).kind == ERRORS)}) TableAlias() ]
     [
         LOOKAHEAD(2) "("
               [ LOOKAHEAD(2) TableName() "." ] Column()
@@ -2479,7 +2481,7 @@ void SubqueryFactoringClause() #void :
 ASTUpdateStatement UpdateStatement() :
 {}
 {
-    <UPDATE> DMLTableExpressionClause() [ LOOKAHEAD(2) TableAlias() ]
+    <UPDATE> DMLTableExpressionClause() [ LOOKAHEAD(1, ID(), {!(getToken(1).kind == LOG && getToken(2).kind == ERRORS)}) TableAlias() ]
     UpdateSetClause()
     [ WhereClause() ]
     [ ReturningClause() ]
@@ -2551,7 +2553,7 @@ ASTReturningClause ReturningClause() :
 ASTErrorLoggingClause ErrorLoggingClause() :
 {}
 {
-    "LOG" "ERRORS"
+    <LOG> <ERRORS>
     [ <INTO> [ LOOKAHEAD(2) SchemaName() "." ] TableName() ]
     [ "(" SqlExpression() ")" ]
     [ "REJECT" <LIMIT> ( NumericLiteral() | "UNLIMITED" ) ]
@@ -2564,7 +2566,7 @@ ASTDeleteStatement DeleteStatement() :
 {
     <DELETE> [ <FROM> ]
     ( DMLTableExpressionClause() | <ONLY> "(" DMLTableExpressionClause() ")" )
-    [ TableAlias() ]
+    [ LOOKAHEAD(1, ID(), {!(getToken(1).kind == LOG && getToken(2).kind == ERRORS)}) TableAlias() ]
     [ WhereClause() ]
     [ ReturningClause() ]
     [ ErrorLoggingClause() ]
@@ -4783,6 +4785,7 @@ TOKEN [IGNORE_CASE]:
 <ELEMENT: "ELEMENT"> |
 <ELSIF: "ELSIF"> |
 <ENABLE: "ENABLE"> | // Needed for 11G Trigger Syntax
+<ERRORS: "ERRORS"> |
 <ESCAPE: "ESCAPE"> |
 <EXCEPT: "EXCEPT"> |
 <EXCEPTIONS: "EXCEPTIONS"> |
@@ -4830,6 +4833,7 @@ TOKEN [IGNORE_CASE]:
 <LIKE4: "LIKE4"> |
 <LIMIT: "LIMIT"> |
 <LIMITED: "LIMITED"> |
+<LOG: "LOG"> |
 <LONG: "LONG"> |
 <LOOP: "LOOP"> |
 <MAP: "MAP"> |
@@ -5295,7 +5299,7 @@ ASTKEYWORD_UNRESERVED KEYWORD_UNRESERVED (): {}
 // PL/SQL UNRESERVED KEYWORDS - V$RESERVED.RESERVED='N'
 (
 "REF" | "LAST" | "TRIM" | "OVER" | "UNBOUNDED" | "PRECEDING" | "FOLLOWING" | "WITHIN" |
-"OVERFLOW" | "ERROR" | "WITHOUT" | "COUNT" | "SUBPARTITION" | "LOG" | "ERRORS" | "REJECT" | "UNLIMITED" |
+"OVERFLOW" | "ERROR" | "WITHOUT" | "COUNT" | "SUBPARTITION" | <LOG> | <ERRORS> | "REJECT" | "UNLIMITED" |
 <FALSE>
  | <TRUE>
  | <A>
