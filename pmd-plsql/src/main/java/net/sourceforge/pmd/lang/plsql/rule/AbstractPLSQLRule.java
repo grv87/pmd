@@ -82,6 +82,7 @@ import net.sourceforge.pmd.lang.plsql.ast.ASTExpressionListSingle;
 import net.sourceforge.pmd.lang.plsql.ast.ASTExtractExpression;
 import net.sourceforge.pmd.lang.plsql.ast.ASTFetchStatement;
 import net.sourceforge.pmd.lang.plsql.ast.ASTFieldDeclaration;
+import net.sourceforge.pmd.lang.plsql.ast.ASTFirstLast;
 import net.sourceforge.pmd.lang.plsql.ast.ASTFloatingPointCondition;
 import net.sourceforge.pmd.lang.plsql.ast.ASTForAllIndex;
 import net.sourceforge.pmd.lang.plsql.ast.ASTForAllStatement;
@@ -1338,6 +1339,11 @@ public abstract class AbstractPLSQLRule extends AbstractRule implements PLSQLPar
 
     @Override
     public Object visit(ASTAnalyticClause node, Object data) {
+        return visit((PLSQLNode) node, data);
+    }
+
+    @Override
+    public Object visit(ASTFirstLast node, Object data) {
         return visit((PLSQLNode) node, data);
     }
 

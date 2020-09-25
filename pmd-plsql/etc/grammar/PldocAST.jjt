@@ -1804,6 +1804,17 @@ ASTXMLAttributesClause XMLAttributesClause() :
 }
 
 /**
+ * See https://docs.oracle.com/database/121/SQLRF/functions074.htm#SQLRF00641
+ * See https://docs.oracle.com/database/121/SQLRF/functions095.htm#SQLRF00653
+ */
+ASTFirstLast FirstLast() :
+{}
+{
+    LOOKAHEAD({isKeyword("KEEP")}) KEYWORD("KEEP") "(" KEYWORD("DENSE_RANK") ( KEYWORD("FIRST") | "LAST" ) OrderByClause() ")"
+    { return jjtThis; }
+}
+
+/**
  * See https://docs.oracle.com/en/database/oracle/oracle-database/18/sqlrf/Analytic-Functions.html
  */
 ASTAnalyticClause AnalyticClause() :
@@ -3381,7 +3392,7 @@ ASTPrimaryPrefix PrimaryPrefix() :
 (
   LOOKAHEAD(OuterJoinExpression()) ( simpleNode = OuterJoinExpression() ) { sb.append(simpleNode.getImage()); }
   // Note: AnalyticClause and WithinClause are only allowed for specific functions, but this grammar allows it for all functions.
-| LOOKAHEAD(FunctionName() "(") ( simpleNode = FunctionCall() [ AnalyticClause() ] [ WithinClause() ] ) { sb.append(simpleNode.getImage()); }
+| LOOKAHEAD(FunctionName() "(") ( simpleNode = FunctionCall() [ FirstLast() ] [ AnalyticClause() ] [ WithinClause() ] ) { sb.append(simpleNode.getImage()); }
 | LOOKAHEAD(MultiSetCondition()) simpleNode = MultiSetCondition()
 | LOOKAHEAD(<CASE>) ( simpleNode =CaseExpression() ) { sb.append(simpleNode.getImage()) ; } //SRT 20110520
 | LOOKAHEAD(ObjectExpression() ) ( simpleNode = ObjectExpression() ) { sb.append(simpleNode.getImage()) ; } //SRT 20110604

@@ -25,6 +25,23 @@ SELECT manager_id, last_name, hire_date, salary,
   FROM employees
   ORDER BY manager_id, hire_date, salary;
 
+-- Example from: https://docs.oracle.com/database/121/SQLRF/functions074.htm#SQLRF00641
+SELECT department_id,
+       MIN(salary) KEEP (DENSE_RANK FIRST ORDER BY commission_pct) "Worst",
+       MAX(salary) KEEP (DENSE_RANK LAST ORDER BY commission_pct) "Best"
+  FROM employees
+  GROUP BY department_id
+  ORDER BY department_id;
+
+-- Example from: https://docs.oracle.com/database/121/SQLRF/functions074.htm#SQLRF00641
+SELECT last_name, department_id, salary,
+       MIN(salary) KEEP (DENSE_RANK FIRST ORDER BY commission_pct)
+         OVER (PARTITION BY department_id) "Worst",
+       MAX(salary) KEEP (DENSE_RANK LAST ORDER BY commission_pct)
+         OVER (PARTITION BY department_id) "Best"
+   FROM employees
+   ORDER BY department_id, salary, last_name;
+
 -- Example from: https://docs.oracle.com/en/database/oracle/oracle-database/18/sqlrf/LISTAGG.html
 SELECT LISTAGG(last_name, '; ')
          WITHIN GROUP (ORDER BY hire_date, last_name) "Emp_list",
