@@ -2398,10 +2398,11 @@ ASTMultiTableInsert MultiTableInsert() :
 {}
 {
   (
-    LOOKAHEAD(2) <ALL> ( InsertIntoClause() [ ValuesClause() ] [ ErrorLoggingClause() ] )+ Subquery()
+    LOOKAHEAD(2) <ALL> ( InsertIntoClause() [ ValuesClause() ] [ ErrorLoggingClause() ] )+
   |
     ConditionalInsertClause()
   )
+  Subquery()
     { return jjtThis; }
 }
 

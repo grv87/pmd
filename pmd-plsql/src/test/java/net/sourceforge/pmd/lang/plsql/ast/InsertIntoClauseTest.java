@@ -24,4 +24,10 @@ public class InsertIntoClauseTest extends AbstractPLSQLParserTst {
     public void parseInsertIntoWithRecord() {
         plsql.parseResource("InsertIntoClauseRecord.pls");
     }
+
+    @Test
+    public void parseMultitableInsert() {
+        plsql.parseResource("MultitableInsertClause.pls");
+    }
+
 }
