@@ -2546,7 +2546,7 @@ ASTDeleteStatement DeleteStatement() :
 {}
 {
     <DELETE> [ <FROM> ]
-    ( TableReference() | <ONLY> "(" TableReference() ")" )
+    ( DMLTableExpressionClause() | <ONLY> "(" DMLTableExpressionClause() ")" )
     [ TableAlias() ]
     [ WhereClause() ]
     [ ReturningClause() ]
