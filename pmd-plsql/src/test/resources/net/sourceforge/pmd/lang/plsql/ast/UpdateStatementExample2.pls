@@ -63,4 +63,9 @@ update employees
          salary = (salary - discounts) * sal_raise
      where employee_id = emp_id;
 
+update employees
+   set salary = salary * 1.1
+   where department_id = 100
+   log errors into errlog;
+
 END;

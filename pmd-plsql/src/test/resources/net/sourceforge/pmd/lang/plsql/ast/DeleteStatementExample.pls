@@ -17,5 +17,9 @@ BEGIN
         WHERE job_id = 'SA_REP'
         AND commission_pct < .2;
 
+    DELETE FROM raises
+       WHERE commission_pct > .2
+       LOG ERRORS REJECT LIMIT UNLIMITED;
+
 END;
 /

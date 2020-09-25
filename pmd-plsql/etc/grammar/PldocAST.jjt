@@ -2365,7 +2365,7 @@ ASTInsertStatement InsertStatement() :
 ASTSingleTableInsert SingleTableInsert() :
 {}
 {
-    InsertIntoClause() ( ValuesClause() [ ReturningClause() ] | Subquery() )
+    InsertIntoClause() ( ValuesClause() [ ReturningClause() ] | Subquery() ) [ ErrorLoggingClause() ]
     { return jjtThis; }
 }
 
@@ -2398,7 +2398,7 @@ ASTMultiTableInsert MultiTableInsert() :
 {}
 {
   (
-    LOOKAHEAD(2) <ALL> ( InsertIntoClause() [ ValuesClause() ] )+ Subquery()
+    LOOKAHEAD(2) <ALL> ( InsertIntoClause() [ ValuesClause() ] [ ErrorLoggingClause() ] )+ Subquery()
   |
     ConditionalInsertClause()
   )
@@ -2408,8 +2408,8 @@ ASTMultiTableInsert MultiTableInsert() :
 ASTConditionalInsertClause ConditionalInsertClause() :
 {}
 {
-    [ <ALL> | KEYWORD("FIRST") ] ( <WHEN> Condition() <THEN> ( InsertIntoClause() [ ValuesClause() ] )+ )+
-        [ <ELSE> ( InsertIntoClause() [ ValuesClause() ] )+ ]
+    [ <ALL> | KEYWORD("FIRST") ] ( <WHEN> Condition() <THEN> ( InsertIntoClause() [ ValuesClause() ] [ ErrorLoggingClause() ] )+ )+
+        [ <ELSE> ( InsertIntoClause() [ ValuesClause() ] [ ErrorLoggingClause() ] )+ ]
     { return jjtThis; }
 }
 
@@ -2547,6 +2547,7 @@ ASTDeleteStatement DeleteStatement() :
     <DELETE> [ <FROM> ]
     ( TableReference() | <ONLY> "(" TableReference() ")" )
     [ WhereClause() ]
+    [ ErrorLoggingClause() ]
     { return jjtThis; }
 }
 
