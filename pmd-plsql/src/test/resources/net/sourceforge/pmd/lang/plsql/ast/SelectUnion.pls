@@ -27,4 +27,13 @@ SELECT dep.dep_id
   FROM departments adep
   WHERE adep.dep_id = id;
 
+SELECT product_id FROM inventories
+MINUS
+SELECT product_id FROM order_items
+ORDER BY product_id;
+
+SELECT product_id FROM inventories
+INTERSECT
+SELECT product_id FROM order_items;
+
 END;
