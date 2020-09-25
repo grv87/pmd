@@ -2453,6 +2453,12 @@ void SubqueryFactoringClause() #void :
 {}
 {
     Name() // query_name
+    [
+      "("
+        Name()
+        ("," Name())*
+      ")"
+    ]
     <AS>
     "(" Subquery() ")"
     // [ SearchClause() ]
