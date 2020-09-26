@@ -2258,7 +2258,7 @@ ASTUnlabelledStatement UnlabelledStatement()  :
 	| LOOKAHEAD(3)  ContinueStatement()  ";" // CONTINUE keyword was added in 11G, so Oracle compilation supports CONTINUE as a variable name
 	| CaseStatement()  ";"
 	| IfStatement()  ";"
-	| LOOKAHEAD(<FOR> ID() <IN> "(" <SELECT>) CursorForLoopStatement() ";"
+	| LOOKAHEAD(<FOR> ID() <IN> "(" (<WITH> | <SELECT>)) CursorForLoopStatement() ";"
 	| ForStatement()  ";"
 	| ForAllStatement()  ";"
 	| LoopStatement()  ";"
