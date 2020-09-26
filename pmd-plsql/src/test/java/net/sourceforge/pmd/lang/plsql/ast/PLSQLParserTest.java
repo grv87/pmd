@@ -78,4 +78,9 @@ public class PLSQLParserTest extends AbstractPLSQLParserTst {
     public void testCaseBooleanVariable() {
         plsql.parseResource("CaseBooleanVariable.pls");
     }
+
+    @Test
+    public void testCaseParentheses() {
+        plsql.parseResource("CaseParentheses.pls");
+    }
 }
