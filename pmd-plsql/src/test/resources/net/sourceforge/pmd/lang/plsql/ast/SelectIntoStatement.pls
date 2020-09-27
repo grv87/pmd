@@ -7,6 +7,7 @@ DECLARE
     TYPE t_emp_role_codes IS TABLE OF comp_mprc_emp_role.emp_role_code%TYPE;
     TYPE t_gsn_ids IS TABLE OF comp_mprc_emp_role.gsn_id%TYPE;
     TYPE t_dep_codes IS TABLE OF comp_mprc_emp_role.dep_code%TYPE;
+    TYPE t_somefacts IS TABLE OF NUMBER;
     TYPE t_validfroms IS TABLE OF DATE;
     TYPE t_validtos IS TABLE OF DATE;
     TYPE t_fl_actives IS TABLE OF VARCHAR2(1);
@@ -20,6 +21,7 @@ DECLARE
     v_emp_role_codes    t_emp_role_codes;
     v_gsn_ids           t_gsn_ids;
     v_dep_codes         t_dep_codes;
+    v_somefacts         t_somefacts;
     v_validfroms        t_validfroms;
     v_validtos          t_validtos;
     v_fl_actives        t_fl_actives;
@@ -33,6 +35,7 @@ BEGIN
             ,emp_role_code
             ,gsn_id
             ,dep_code
+            ,somefact
             ,validfrom
             ,validto
             ,fl_active
@@ -45,6 +48,7 @@ BEGIN
             ,v_emp_role_codes
             ,v_gsn_ids
             ,v_dep_codes
+            ,v_somefacts
             ,v_validfroms
             ,v_validtos
             ,v_fl_actives
@@ -57,6 +61,8 @@ BEGIN
                 ,cmer.emp_role_code
                 ,cmer.gsn_id
                 ,cmer.dep_code
+                ,CASE fl_active WHEN 'Y' THEN 1 ELSE -1 END
+                * cmer.somefact somefact
                 ,TRUNC(insert_entry.dmltime)    AS validfrom
                 ,NULL                           AS validto
                 ,'Y'                            AS fl_active
@@ -79,6 +85,7 @@ BEGIN
                 ,jcmer.emp_role_code
                 ,jcmer.gsn_id
                 ,jcmer.dep_code
+                ,0 somefact
                 ,TRUNC(insert_entry.dmltime)    AS validfrom
                 ,TRUNC(jcmer.dmltime)           AS validfrom
                 ,'N'                            AS fl_active
